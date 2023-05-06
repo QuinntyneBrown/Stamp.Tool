@@ -1,3 +1,3 @@
 ﻿using Stamp.Tool;
 
-var context = new Context();
+var context = new Context(args);

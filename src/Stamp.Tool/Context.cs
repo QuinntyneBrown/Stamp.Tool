@@ -5,11 +5,51 @@ namespace Stamp.Tool;
 
 public class Context {
 
-    public Context()
+    public Context(params string[] args)
     {
-        var args = Environment.GetCommandLineArgs();    
+        args ??= Environment.GetCommandLineArgs().Skip(1).ToArray();
 
+        FileName = GetValue(args, "--name");
 
+        Extension = GetValue(args, "--extension");
+
+        CurrentDirectory = GetValue(args, "--extension");
+
+        Template = GetValue(args, "--template");
+
+        Tokens = GetTokens(args);
+
+        
+    }
+
+    string GetValue(string[] args, string name)
+    {        
+        var index = Array.IndexOf(args, name);
+
+        if (index == -1)
+            return string.Empty;
+
+        return args[index + 1];
+    }
+
+    Dictionary<string,string> GetTokens(string[] args)
+    {
+        var tokens = new Dictionary<string,string>();
+
+        var entry = GetValue(args, "--tokens");
+
+        if(string.IsNullOrEmpty(entry))
+            return tokens;
+
+        foreach(var item in entry.Split(','))
+        {
+            var parts = item.Split(':');
+
+            tokens.Add(parts[0], parts[1]);
+
+        }
+
+        return tokens;
     }
 
     public string FileName { get; set; }
@@ -17,5 +57,6 @@ public class Context {
     public string CurrentDirectory { get; set; } = Environment.CurrentDirectory;
     public string Template { get; set; }
     public Dictionary<string, string> Tokens { get; set; }
+
 }
 
