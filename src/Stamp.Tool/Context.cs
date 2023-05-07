@@ -9,22 +9,32 @@ public class Context {
     {
         args ??= Environment.GetCommandLineArgs().Skip(1).ToArray();
 
-        FileName = GetValue(args, "--name");
+        FileName = GetValue(args, new [] { "--name", "-n" });
 
-        Extension = GetValue(args, "--extension");
+        Extension = GetValue(args, new[] { "--extension", "-e" });
 
-        CurrentDirectory = GetValue(args, "--extension");
+        CurrentDirectory = GetValue(args, new[] { "--directory", "-d" });
 
-        Template = GetValue(args, "--template");
+        Template = GetValue(args, new[] { "--template", "-t" });
 
         Tokens = GetTokens(args);
-
-        
     }
 
-    string GetValue(string[] args, string name)
-    {        
-        var index = Array.IndexOf(args, name);
+    string GetValue(string[] args, string[] keys)
+    {
+        int index = -1;
+
+        foreach(var key in keys)
+        {
+            var i = Array.IndexOf(args, key);
+
+            if (i != -1)
+            {
+                index = i; 
+                break;
+            }
+        }
+        
 
         if (index == -1)
             return string.Empty;
@@ -36,7 +46,7 @@ public class Context {
     {
         var tokens = new Dictionary<string,string>();
 
-        var entry = GetValue(args, "--tokens");
+        var entry = GetValue(args, new[] { "--tokens" } );
 
         if(string.IsNullOrEmpty(entry))
             return tokens;
@@ -45,7 +55,7 @@ public class Context {
         {
             var parts = item.Split(':');
 
-            tokens.Add(parts[0], parts[1]);
+            tokens.Add("{{ " + parts[0].Trim() + " }}", parts[1]);
 
         }
 
