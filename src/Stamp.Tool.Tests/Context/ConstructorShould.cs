@@ -13,7 +13,7 @@ public class ConstructorShould
         // ARRANGE
 
         // ACT
-        var result = new Context();
+        var result = new Context(new NamingConventionConverter());
 
         // ASSERT
         Assert.NotNull(result);

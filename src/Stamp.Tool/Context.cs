@@ -3,17 +3,22 @@
 
 namespace Stamp.Tool;
 
-public class Context {
-
-    public Context(params string[] args)
+public class Context
+{
+    private readonly INamingConventionConverter _namingConventionConverter;
+    public Context(INamingConventionConverter namingConventionConverter, params string[] args)
     {
+        _namingConventionConverter = namingConventionConverter;
+
         args ??= Environment.GetCommandLineArgs().Skip(1).ToArray();
 
-        FileName = GetValue(args, new [] { "--name", "-n" });
+        FileName = GetValue(args, new[] { "--name", "-n" });
 
         Extension = GetValue(args, new[] { "--extension", "-e" });
 
-        CurrentDirectory = GetValue(args, new[] { "--directory", "-d" });
+        var currentDirectory = GetValue(args, new[] { "--directory", "-d" });
+
+        CurrentDirectory = string.IsNullOrEmpty(currentDirectory) ? Environment.CurrentDirectory : currentDirectory;
 
         Template = GetValue(args, new[] { "--template", "-t" });
 
@@ -24,17 +29,17 @@ public class Context {
     {
         int index = -1;
 
-        foreach(var key in keys)
+        foreach (var key in keys)
         {
             var i = Array.IndexOf(args, key);
 
             if (i != -1)
             {
-                index = i; 
+                index = i;
                 break;
             }
         }
-        
+
 
         if (index == -1)
             return string.Empty;
@@ -42,25 +47,31 @@ public class Context {
         return args[index + 1];
     }
 
-    Dictionary<string,string> GetTokens(string[] args)
+    Dictionary<string, string> GetTokens(string[] args)
     {
-        var tokens = new Dictionary<string,string>();
+        var tokens = new Dictionary<string, string>();
 
-        var entry = GetValue(args, new[] { "--tokens" } );
+        var entry = GetValue(args, new[] { "--tokens" });
 
-        if(string.IsNullOrEmpty(entry))
+        if (string.IsNullOrEmpty(entry))
             return tokens;
 
-        foreach(var item in entry.Split(','))
+        foreach (var item in entry.Split(','))
         {
             var parts = item.Split(':');
 
-            tokens.Add("{{ " + parts[0].Trim() + " }}", parts[1]);
-
+            tokens.Add(WithHandleBars(parts[0]), parts[1]);
+            tokens.Add(WithHandleBars($"{parts[0]}PascalCase"), _namingConventionConverter.Convert(NamingConvention.PascalCase, parts[1]));
+            tokens.Add(WithHandleBars($"{parts[0]}CamelCase"), _namingConventionConverter.Convert(NamingConvention.CamelCase, parts[1]));
+            tokens.Add(WithHandleBars($"{parts[0]}TitleCase"), _namingConventionConverter.Convert(NamingConvention.TitleCase, parts[1]));
+            tokens.Add(WithHandleBars($"{parts[0]}SnakeCase"), _namingConventionConverter.Convert(NamingConvention.SnakeCase, parts[1]));
+            tokens.Add(WithHandleBars($"{parts[0]}KebobCase"), _namingConventionConverter.Convert(NamingConvention.KebobCase, parts[1]));
         }
 
         return tokens;
     }
+
+    string WithHandleBars(string value) => "{{ " + value.Trim() + " }}";
 
     public string FileName { get; set; }
     public string Extension { get; set; }
