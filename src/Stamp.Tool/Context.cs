@@ -18,7 +18,7 @@ public class Context
 
         var currentDirectory = GetValue(args, new[] { "--directory", "-d" });
 
-        CurrentDirectory = string.IsNullOrEmpty(currentDirectory) ? Environment.CurrentDirectory : currentDirectory;
+        Directory = string.IsNullOrEmpty(currentDirectory) ? Environment.CurrentDirectory : currentDirectory;
 
         Template = GetValue(args, new[] { "--template", "-t" });
 
@@ -53,6 +53,15 @@ public class Context
 
         var entry = GetValue(args, new[] { "--tokens" });
 
+        var namingConventions = new[]
+        {
+            NamingConvention.PascalCase,
+            NamingConvention.CamelCase,
+            NamingConvention.TitleCase,
+            NamingConvention.SnakeCase,
+            NamingConvention.KebobCase
+        };
+
         if (string.IsNullOrEmpty(entry))
             return tokens;
 
@@ -61,6 +70,12 @@ public class Context
             var parts = item.Split(':');
 
             tokens.Add(WithHandleBars(parts[0]), parts[1]);
+
+            foreach(var namingConvention in  namingConventions)
+            {
+                tokens.Add(WithHandleBars($"{parts[0]}{namingConvention}"), _namingConventionConverter.Convert(namingConvention, parts[1]));
+            }
+
             tokens.Add(WithHandleBars($"{parts[0]}PascalCase"), _namingConventionConverter.Convert(NamingConvention.PascalCase, parts[1]));
             tokens.Add(WithHandleBars($"{parts[0]}CamelCase"), _namingConventionConverter.Convert(NamingConvention.CamelCase, parts[1]));
             tokens.Add(WithHandleBars($"{parts[0]}TitleCase"), _namingConventionConverter.Convert(NamingConvention.TitleCase, parts[1]));
@@ -75,7 +90,7 @@ public class Context
 
     public string FileName { get; set; }
     public string Extension { get; set; }
-    public string CurrentDirectory { get; set; } = Environment.CurrentDirectory;
+    public string Directory { get; set; } = Environment.CurrentDirectory;
     public string Template { get; set; }
     public Dictionary<string, string> Tokens { get; set; }
 

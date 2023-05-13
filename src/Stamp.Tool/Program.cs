@@ -18,4 +18,4 @@ foreach (var token in context.Tokens)
     fileName = fileName.Replace(token.Key, token.Value);
 }
 
-File.WriteAllText(Path.Combine(context.CurrentDirectory, $"{fileName}{context.Extension}"), result);
+File.WriteAllText(Path.Combine(context.Directory, $"{fileName}{context.Extension}"), result);

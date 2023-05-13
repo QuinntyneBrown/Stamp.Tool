@@ -13,7 +13,14 @@ public class ConstructorShould
         // ARRANGE
 
         // ACT
-        var result = new Context(new NamingConventionConverter());
+        var result = new Context(new NamingConventionConverter(), new []
+        {
+            "",
+            "--tokens",
+            "name:Foo"
+        })
+        {
+        };
 
         // ASSERT
         Assert.NotNull(result);
