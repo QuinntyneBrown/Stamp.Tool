@@ -11,9 +11,7 @@ public class RazorTemplateProcessor
     {
         var compiledTemplate = await _razorEngine.CompileAsync<RazorEngineTemplateBase<T>>(template);
 
-        return await RunAsync(compiledTemplate, model);
+        return await compiledTemplate.RunAsync(i => i.Model = model);
     }
 
-    private async Task<string> RunAsync<T>(IRazorEngineCompiledTemplate<RazorEngineTemplateBase<T>> compiledTemplate, T model)
-        => await compiledTemplate.RunAsync(i => i.Model = model);
 }
