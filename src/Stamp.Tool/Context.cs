@@ -71,22 +71,16 @@ public class Context
 
             tokens.Add(WithHandleBars(parts[0]), parts[1]);
 
-            foreach(var namingConvention in  namingConventions)
+            foreach (var namingConvention in namingConventions)
             {
                 tokens.Add(WithHandleBars($"{parts[0]}{namingConvention}"), _namingConventionConverter.Convert(namingConvention, parts[1]));
             }
-
-            tokens.Add(WithHandleBars($"{parts[0]}PascalCase"), _namingConventionConverter.Convert(NamingConvention.PascalCase, parts[1]));
-            tokens.Add(WithHandleBars($"{parts[0]}CamelCase"), _namingConventionConverter.Convert(NamingConvention.CamelCase, parts[1]));
-            tokens.Add(WithHandleBars($"{parts[0]}TitleCase"), _namingConventionConverter.Convert(NamingConvention.TitleCase, parts[1]));
-            tokens.Add(WithHandleBars($"{parts[0]}SnakeCase"), _namingConventionConverter.Convert(NamingConvention.SnakeCase, parts[1]));
-            tokens.Add(WithHandleBars($"{parts[0]}KebobCase"), _namingConventionConverter.Convert(NamingConvention.KebobCase, parts[1]));
         }
 
         return tokens;
     }
 
-    string WithHandleBars(string value) => "{{ " + value.Trim() + " }}";
+    string WithHandleBars(string value) => value.Trim(); //"{{ " + value.Trim() + " }}";
 
     public string FileName { get; set; }
     public string Extension { get; set; }

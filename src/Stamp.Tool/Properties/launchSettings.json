@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Stamp.Tool": {
+      "commandName": "Project",
+      "commandLineArgs": "-n @Model[\"\"\"Name\"\"\"] -t C:\\projects\\Stamp.Tool\\src\\Stamp.Tool\\Program.cs -e .cs --tokens Name:Foo -d C:\\projects\\Stamp.Tool\\src\\Stamp.Tool\\"
+    }
+  }
+}

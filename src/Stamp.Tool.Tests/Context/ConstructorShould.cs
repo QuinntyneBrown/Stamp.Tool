@@ -13,7 +13,7 @@ public class ConstructorShould
         // ARRANGE
 
         // ACT
-        var result = new Context(new NamingConventionConverter(), new []
+        var result = new Context(new NamingConventionConverter(), new[]
         {
             "",
             "--tokens",

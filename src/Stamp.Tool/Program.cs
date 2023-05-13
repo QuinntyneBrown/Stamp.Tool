@@ -3,19 +3,14 @@
 
 using Stamp.Tool;
 
+var processor = new RazorTemplateProcessor();
+
 var context = new Context(new NamingConventionConverter(), args);
 
 var template = string.IsNullOrEmpty(context.Template) ? string.Empty : File.ReadAllText(context.Template);
 
-var result = template;
+var result = await processor.ProcessAsync(template, context.Tokens);
 
-var fileName = context.FileName;
-
-foreach (var token in context.Tokens)
-{
-    result = result.Replace(token.Key, token.Value);
-
-    fileName = fileName.Replace(token.Key, token.Value);
-}
+var fileName = await processor.ProcessAsync(context.FileName, context.Tokens);
 
 File.WriteAllText(Path.Combine(context.Directory, $"{fileName}{context.Extension}"), result);
